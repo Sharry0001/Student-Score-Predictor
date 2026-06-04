@@ -5,14 +5,19 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 
-# Load Dataset
-data = pd.read_csv("student_data.csv")
+# ==========================
+# LOAD DATASET
+# ==========================
 
-# Features and Target
+data = pd.read_csv("Student_data.csv")
+
 X = data[["Hours", "Attendance", "Assignments", "PreviousScore"]]
 y = data["FinalScore"]
 
-# Split Data
+# ==========================
+# TRAIN TEST SPLIT
+# ==========================
+
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -20,27 +25,40 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
-# Train Model
+# ==========================
+# TRAIN MODEL
+# ==========================
+
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-# Predictions
-predictions = model.predict(X_test)
+# ==========================
+# MODEL ACCURACY
+# ==========================
 
-# Accuracy
+predictions = model.predict(X_test)
 accuracy = r2_score(y_test, predictions)
+
+# ==========================
+# MAIN MENU
+# ==========================
 
 while True:
 
-    print("\n==============================")
-    print("AI STUDENT PERFORMANCE PREDICTOR")
-    print("==============================")
-    print("1. Predict Student Score")
+    print("\n" + "=" * 35)
+    print(" AI STUDENT PERFORMANCE PREDICTOR ")
+    print("=" * 35)
+
+    print("\n1. Predict Student Score")
     print("2. View Model Accuracy")
     print("3. Generate Graph")
     print("4. Exit")
 
     choice = input("\nEnter Choice: ")
+
+    # ==========================
+    # PREDICT SCORE
+    # ==========================
 
     if choice == "1":
 
@@ -49,11 +67,16 @@ while True:
         assignments = float(input("Assignment Score (%): "))
         previous = float(input("Previous Exam Score: "))
 
-        result = model.predict(
-            [[hours, attendance, assignments, previous]]
-        )
+        input_data = pd.DataFrame({
+            "Hours": [hours],
+            "Attendance": [attendance],
+            "Assignments": [assignments],
+            "PreviousScore": [previous]
+        })
 
-        score = round(result[0], 2)
+        result = model.predict(input_data)
+
+        score = round(float(result[0]), 2)
 
         if score > 100:
             score = 100
@@ -61,26 +84,47 @@ while True:
         if score < 0:
             score = 0
 
+        # ==========================
+        # GRADE SYSTEM
+        # ==========================
+
         if score >= 90:
             grade = "A+"
             performance = "Outstanding"
+
         elif score >= 80:
             grade = "A"
             performance = "Excellent"
+
         elif score >= 70:
             grade = "B"
             performance = "Good"
+
         elif score >= 60:
             grade = "C"
             performance = "Average"
+
         else:
             grade = "D"
             performance = "Needs Improvement"
 
-        print("\n------ RESULT ------")
-        print("Predicted Score:", score)
-        print("Grade:", grade)
-        print("Performance:", performance)
+        # ==========================
+        # DISPLAY RESULT
+        # ==========================
+
+        print("\n" + "=" * 30)
+        print("       FINAL RESULT")
+        print("=" * 30)
+
+        print(f"Predicted Score : {score}")
+        print(f"Grade           : {grade}")
+        print(f"Performance     : {performance}")
+
+        print("=" * 30)
+
+        # ==========================
+        # SAVE RESULT
+        # ==========================
 
         result_df = pd.DataFrame({
             "Predicted Score": [score],
@@ -92,20 +136,33 @@ while True:
 
         print("\nResult saved in results.csv")
 
+        input("\nPress Enter to continue...")
+
+    # ==========================
+    # ACCURACY
+    # ==========================
+
     elif choice == "2":
 
-        print(
-            f"\nModel Accuracy: {accuracy*100:.2f}%"
-        )
+        print("\n" + "=" * 30)
+        print(" MODEL PERFORMANCE ")
+        print("=" * 30)
+
+        print(f"Accuracy: {accuracy * 100:.2f}%")
+
+        print("=" * 30)
+
+        input("\nPress Enter to continue...")
+
+    # ==========================
+    # GRAPH
+    # ==========================
 
     elif choice == "3":
 
-        plt.figure(figsize=(8,5))
+        plt.figure(figsize=(8, 5))
 
-        plt.scatter(
-            y_test,
-            predictions
-        )
+        plt.scatter(y_test, predictions)
 
         plt.xlabel("Actual Scores")
         plt.ylabel("Predicted Scores")
@@ -114,13 +171,23 @@ while True:
             "Actual vs Predicted Student Performance"
         )
 
+        plt.grid(True)
+
         plt.show()
+
+    # ==========================
+    # EXIT
+    # ==========================
 
     elif choice == "4":
 
-        print("Thank You!")
+        print("\nThank you for using the project!")
         break
+
+    # ==========================
+    # INVALID INPUT
+    # ==========================
 
     else:
 
-        print("Invalid Choice")
+        print("\nInvalid Choice!")

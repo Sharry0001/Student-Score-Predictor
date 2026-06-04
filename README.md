@@ -26,3 +26,6 @@ Machine Learning project that predicts student performance using:
 ## Machine Learning Algorithm
 
 Linear Regression
+## Project Output
+
+![Project Output](screenshots/project_output.png)
